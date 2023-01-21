@@ -1,22 +1,6 @@
 
-
-/*
-Arduino Turn LED On/Off using Serial Commands
-Created April 22, 2015
-Hammad Tariq, Incubator (Pakistan)
-
-It's a simple sketch which waits for a character on serial
-and in case of a desirable character, it turns an LED on/off.
-
-Possible string values:
-a (to turn the LED on)
-b (tor turn the LED off)
-*/
 #include <AFMotor.h>
 
-//AF_DCMotor motor4(4);
-//AF_DCMotor motor3(3);
-//AF_DCMotor motor2(2);
 AF_DCMotor motor1(1);
 char junk;
 String inputString="";
@@ -25,14 +9,6 @@ void setup()
 {
   Serial.begin(9600);
   //Set initial speed of the motor & stop
-//  motor4.setSpeed(200);
-//  motor4.run(RELEASE);
-//
-//  motor3.setSpeed(200);
-//  motor3.run(RELEASE);
-//
-//  motor2.setSpeed(200);
-//  motor2.run(RELEASE);
 
   motor1.setSpeed(200);
   motor1.run(RELEASE);
@@ -199,13 +175,13 @@ void loop()
   if (Serial.available() > 0) {
 //    input_bytes = Serial.readStringUntil('\n');
 //    {junk = Serial.read() ;}
-        while(Serial.available())
+    while(Serial.available())
     {
       char inChar = (char)Serial.read(); //read the input
       inputString += inChar;        //make a string of the characters coming on serial
     }
     Serial.println(inputString);
-    { junk = Serial.read() ; }
+    junk = Serial.read();
     if (inputString == "f") {
       // Now change motor direction
       switchDir("forward");
@@ -256,35 +232,3 @@ void loop()
 //  motor1.run(RELEASE);
 //  delay(1000);
 }
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-//char junk;
-//String inputString="";
-//
-//void setup()                    // run once, when the sketch starts
-//{
-// Serial.begin(9600);            // set the baud rate to 9600, same should be of your Serial Monitor
-// pinMode(13, OUTPUT);
-//}
-
-//void loop()
-//{
-//  if(Serial.available()){
-//  while(Serial.available())
-//    {
-//      char inChar = (char)Serial.read(); //read the input
-//      inputString += inChar;        //make a string of the characters coming on serial
-//    }
-//    Serial.println(inputString);
-//    while (Serial.available() > 0)  
-//    { junk = Serial.read() ; }      // clear the serial buffer
-//    if(inputString == "a"){         //in case of 'a' turn the LED on
-//      digitalWrite(13, HIGH);  
-//    }else if(inputString == "b"){   //incase of 'b' turn the LED off
-//      digitalWrite(13, LOW);
-//    }
-//    inputString = "";
-//  }
-//}
