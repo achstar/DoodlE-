@@ -1,10 +1,15 @@
 #include <AFMotor.h>
-
+//Define the sensor pins
+#define S1Trig A0
+#define S1Echo A3
 AF_DCMotor motor4(4);
 AF_DCMotor motor3(3);
 AF_DCMotor motor2(2);
 AF_DCMotor motor1(1);
 String input_bytes;
+byte maxDist = 150;                               //Maximum sensing distance (Objects further than this distance are ignored)
+byte stopDist = 30;                               //Minimum distance from an object to stop in cm
+float timeOut = 2*(maxDist+10)/100/340*1000000;   //Maximum time to wait for a return signal
 
 void setup() 
 {
@@ -21,6 +26,10 @@ void setup()
 
   motor1.setSpeed(200);
   motor1.run(RELEASE);
+  //Set the Trig pins as output pins
+  pinMode(S1Trig, OUTPUT);
+  //Set the Echo pins as input pins
+  pinMode(S1Echo, INPUT);
 }
 
 void switchDir(String dir)
@@ -177,48 +186,65 @@ void testMotors() {
   delay(1000);
 }
 
+//Get the sensor values
+int getDistance() {
+  //pulse output
+  digitalWrite(S1Trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(S1Trig, LOW);
+  unsigned long pulseTime = pulseIn(S1Echo, HIGH, timeOut);//Get the pulse
+  int distance = (float)pulseTime * 340 / 2 / 10000; //Convert time to the distance
+  // Serial.write(distance);
+  return distance; // Return the values from the sensor
+}
+
 void loop() 
 {
   uint8_t i;
+  int distance = getDistance();
   
   if (Serial.available() > 0) {
     input_bytes = Serial.readStringUntil('\n');
-    if (input_bytes == "forward") {
+    if (input_bytes == "forward")  {
       // Now change motor direction
-      switchDir("forward");
-      setSpeeds(200, 200, 200, 200);
-      delay(1000);
-    
-      Serial.write("go forward");
+      if (distance >= stopDist) {
+        switchDir("forward");
+        setSpeeds(200, 200, 200, 200);
+        delay(1000);
+        Serial.write("going forward\n");
+      }
+      else {
+        switchDir("stop");
+        Serial.write("Stopped by distance sensor\n");
+      }
     }
     if (input_bytes == "backward") {
       // Now change motor direction
        switchDir("backward");
        setSpeeds(200, 200, 200, 200);
        delay(1000);
-     
-      Serial.write("go backward");
+       Serial.write("going backward\n");
     }
     if(input_bytes == "stop") {
       switchDir("stop");
-      Serial.write("stop");
+      Serial.write("stop\n");
     }
     if(input_bytes == "right"){
       switchDir("right");
       setSpeeds(200, 200, 200, 200);
       delay(1000);
       
-      Serial.write("right");
+      Serial.write("going right\n");
     }
     if(input_bytes == "left") {
       switchDir("left");
       setSpeeds(200, 200, 200, 200);
       delay(1000);
       
-      Serial.write("left");
+      Serial.write("going left\n");
     }
     else {
-      Serial.write("invalid input");
+      Serial.write("invalid input\n");
       /* motor4.run(RELEASE);
       motor3.run(RELEASE);
       motor2.run(RELEASE);
