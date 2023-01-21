@@ -1,4 +1,4 @@
 # DoodlE?
 
-- sending strings to Arduino (forward, backward)
-- CV stuff idk
+- Hand gestures control movement of robot car
+- Uses OpenCV, Mediapipe, Serial (Arduino), cvzone libraries
