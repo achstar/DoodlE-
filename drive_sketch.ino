@@ -10,26 +10,32 @@ void setup()
 {
   Serial.begin(9600);
   //Set initial speed of the motor & stop
-  /*motor4.setSpeed(300);
+  motor4.setSpeed(200);
   motor4.run(RELEASE);
 
   motor3.setSpeed(200);
   motor3.run(RELEASE);
 
-  motor2.setSpeed(300);
+  motor2.setSpeed(200);
   motor2.run(RELEASE);
 
   motor1.setSpeed(200);
-  motor1.run(RELEASE);*/
+  motor1.run(RELEASE);
 }
 
 void switchDir(String dir)
 {
-  if(dir.equals("straight")){
+  if(dir.equals("forward")){
     motor4.run(FORWARD);
     motor3.run(FORWARD);
     motor2.run(FORWARD);
     motor1.run(FORWARD);
+  }
+  else if(dir.equals("backward")){
+    motor4.run(BACKWARD);
+    motor3.run(BACKWARD);
+    motor2.run(BACKWARD);
+    motor1.run(BACKWARD);
   }
   else if(dir.equals("right")){
     motor4.run(FORWARD);
@@ -84,6 +90,12 @@ void switchDir(String dir)
     motor3.run(BACKWARD);
     motor2.run(BACKWARD);
     motor1.run(FORWARD);
+  }
+  else if(dir.equals("stop")) {
+    motor4.run(RELEASE);
+    motor3.run(RELEASE);
+    motor2.run(RELEASE);
+    motor1.run(RELEASE);
   }
 }
 
@@ -168,80 +180,54 @@ void testMotors() {
 void loop() 
 {
   uint8_t i;
-  // switchDir("left");
-//
-//  for (i=0; i<255; i++) 
-//  {
-//    setSpeeds(i, i, i, i); 
-//    delay(10);
-//  }
- 
-//  // Now turn off motor
-//  motor4.run(RELEASE);
-//  motor3.run(RELEASE);
-//  motor2.run(RELEASE);
-//  motor1.run(RELEASE);
-//  delay(100);
+  
   if (Serial.available() > 0) {
     input_bytes = Serial.readStringUntil('\n');
     if (input_bytes == "forward") {
-      // uint8_t i;
       // Now change motor direction
-      motor4.run(FORWARD);
-      motor3.run(FORWARD);
-      motor2.run(FORWARD);
-      motor1.run(FORWARD);
-      
-      // Accelerate from zero to maximum speed
-      for (i=0; i<255; i++) 
-      {
-        setSpeeds(i, i, i, i);  
-        delay(10);
-      }
-      
-      // Decelerate from maximum speed to zero
-      for (i=255; i!=0; i--) 
-      {
-        setSpeeds(i, i, i, i);       
-        delay(10);
-      }
+      switchDir("forward");
+      setSpeeds(200, 200, 200, 200);
+      delay(1000);
+    
       Serial.write("go forward");
     }
     if (input_bytes == "backward") {
       // Now change motor direction
-      motor4.run(BACKWARD);
-      motor3.run(BACKWARD);
-      motor2.run(BACKWARD);
-      motor1.run(BACKWARD);
-      
-      // Accelerate from zero to maximum speed
-      for (i=0; i<255; i++) 
-      {
-        motor4.setSpeed(i);
-        motor3.setSpeed(i);   
-        motor2.setSpeed(i);
-        motor1.setSpeed(i);  
-        delay(10);
-      }
-      
-      // Decelerate from maximum speed to zero
-      for (i=255; i!=0; i--) 
-      {
-        motor4.setSpeed(i);
-        motor3.setSpeed(i);   
-        motor2.setSpeed(i);
-        motor1.setSpeed(i);  
-        delay(10);
-      }
+       switchDir("backward");
+       setSpeeds(200, 200, 200, 200);
+       delay(1000);
+     
       Serial.write("go backward");
+    }
+    if(input_bytes == "stop") {
+      switchDir("stop");
+      Serial.write("stop");
+    }
+    if(input_bytes == "right"){
+      switchDir("right");
+      setSpeeds(200, 200, 200, 200);
+      delay(1000);
+      
+      Serial.write("right");
+    }
+    if(input_bytes == "left") {
+      switchDir("left");
+      setSpeeds(200, 200, 200, 200);
+      delay(1000);
+      
+      Serial.write("left");
     }
     else {
       Serial.write("invalid input");
+      /* motor4.run(RELEASE);
+      motor3.run(RELEASE);
+      motor2.run(RELEASE);
+      motor1.run(RELEASE);*/
     }
   }
-  motor4.run(RELEASE);
-  motor3.run(RELEASE);
-  motor2.run(RELEASE);
-  motor1.run(RELEASE);
-  delay(1000);
+//  motor4.run(RELEASE);
+//  motor3.run(RELEASE);
+//  motor2.run(RELEASE);
+//  motor1.run(RELEASE);
+//  delay(1000);
 }
