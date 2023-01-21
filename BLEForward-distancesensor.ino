@@ -30,7 +30,7 @@ void setup()
   motor1.run(RELEASE);
 
   //Set the Trig pins as output pins
-  pinMode(S1Trig, OUTPUT);
+  pinMode(S1Trig, OUTPUT); 
   //Set the Echo pins as input pins
   pinMode(S1Echo, INPUT);
 }
