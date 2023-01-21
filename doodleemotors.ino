@@ -2,7 +2,11 @@
 
 //Define the sensor pins
 #define S1Trig A0
+#define S2Trig A1
+#define S3Trig A2
 #define S1Echo A3
+#define S2Echo A4
+#define S3Echo A5
 
 //Set the speed of the motors
 #define Speed 200
@@ -19,10 +23,17 @@ float timeOut = 2*(maxDist+10)/100/340*1000000;   //Maximum time to wait for a r
 
 void setup() {
   Serial.begin(9600);
+
   //Set the Trig pins as output pins
   pinMode(S1Trig, OUTPUT);
+  pinMode(S2Trig, OUTPUT);
+  pinMode(S3Trig, OUTPUT);
+
   //Set the Echo pins as input pins
   pinMode(S1Echo, INPUT);
+  pinMode(S2Echo, INPUT);
+  pinMode(S3Echo, INPUT);
+
   //Set the speed of the motors
   motor1.setSpeed(Speed);
   motor2.setSpeed(Speed);
@@ -31,27 +42,37 @@ void setup() {
 }
 
 void loop() {
-  int distance = getDistance();
+  int sensor1 = getDistance(S1Trig, S1Echo);
+  int sensor2 = getDistance(S2Trig, S2Echo);
+  int sensor3 = getDistance(S3Trig, S3Echo);
 
-  if(distance >= stopDist){
+  if(sensor2 >= stopDist){
     Serial.println("Forward");
     switchDir("forward");
+  } else if(sensor1 >= stopDist){
+    Serial.println("Left");
+    switchDir("left");
+  } else if(sensor3 >= stopDist){
+    Serial.println("Right");
+    switchDir("right");
   }
-  while(distance >= stopDist){
-    distance = getDistance();
+
+  while(sensor2 >= stopDist){
+    sensor2 = getDistance(S2Trig, S2Echo);
     delay(250);
   }
-  switchDir("stop");
+
   Serial.println("Stop");
+  switchDir("stop");
 }
 
 //Get the sensor values
-int getDistance() {
+int getDistance(int trig, int echo) {
   //pulse output
-  digitalWrite(S1Trig, HIGH);
+  digitalWrite(trig, HIGH);
   delayMicroseconds(10);
-  digitalWrite(S1Trig, LOW);
-  unsigned long pulseTime = pulseIn(S1Echo, HIGH, timeOut);//Get the pulse
+  digitalWrite(trig, LOW);
+  unsigned long pulseTime = pulseIn(echo, HIGH, timeOut);//Get the pulse
   int distance = (float)pulseTime * 340 / 2 / 10000; //Convert time to the distance
   Serial.println(distance);
   return distance; // Return the values from the sensor
