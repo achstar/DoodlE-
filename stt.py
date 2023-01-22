@@ -45,16 +45,20 @@ def getCMD(tip, joint, xDiff, yDiff):
 
 def listen():
     with sr.Microphone() as source:
-        audio_data = r.record(source, duration=3)
+        audio_data = r.record(source, duration=10)
         print("Recognizing...")
-        text = r.recognize_google(audio_data)
-        tlist = text.split()
-        word = tlist[0]
-    if (word.lower() == "circle"):
+        try:
+            text = r.recognize_google(audio_data)
+            tlist = text.split()
+            word = tlist[0]
+        except:
+            text = "" 
+            word = ""
+    if ("circle" in word.lower()):
         word = "circle"
-    elif (word.lower() == "square"):
+    elif ("square" in word.lower()):
         word = "square"
-    elif (word.lower() == "diamond"):
+    elif ("diamond" in word.lower()):
         word = "diamond"
     else:
         return False
@@ -65,6 +69,7 @@ while True:
         x = listen()
         listening = False
         if x:
+            print(x) 
             cmd = x
     else:    
         success, img = cap.read()
