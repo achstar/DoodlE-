@@ -1,4 +1,4 @@
-# DoodlE - CMU Build18 2023
+# DoodlE
 
 - Hand gestures control movement of robot car (via Bluetooth connection - HC-05)
 - Distance sensors allow for object avoidance
